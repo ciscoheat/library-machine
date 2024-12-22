@@ -13,6 +13,7 @@
 		background-size: contain;
 		width: var(--width);
 		height: calc(var(--width) * 0.88);
+		transform: translate(25%);
 
 		#display {
 			width: calc(var(--width) * 0.83);
