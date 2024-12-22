@@ -1,2 +1,15 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<main>
+	<div id="bookshelf">BOOKSHELF</div>
+	<div id="screen">SCREEN</div>
+	<div id="table">
+		<div id="card-reader">CARD READER</div>
+		<div id="printer">PRINTER</div>
+		<div id="scanner">SCANNER</div>
+	</div>
+</main>
+
+<style lang="scss">
+	div[id] {
+		border: 1px dashed #aaa;
+	}
+</style>
