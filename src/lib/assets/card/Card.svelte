@@ -15,6 +15,7 @@
 
 <style>
 	.card {
+		position: relative;
 		z-index: 3;
 		--size: 12vw;
 		background-image: url('./card.svg');
