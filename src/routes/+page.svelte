@@ -10,25 +10,36 @@
 
 <main>
 	<Bookshelf {books}></Bookshelf>
-	<Screen></Screen>
+	<div id="library"><Screen></Screen></div>
 	<div id="table">
-		<Scanner></Scanner>
 		<Printer></Printer>
+		<Scanner></Scanner>
 		<CardReader></CardReader>
 		<Card></Card>
 	</div>
 </main>
 
 <style lang="scss">
+	main {
+		display: grid;
+		grid-template-rows: 200px 3fr 5fr;
+		height: 100vh;
+	}
+	#library {
+		background-image: url('$lib/assets/library.jpg');
+		background-size: cover;
+	}
 	#table {
-		background-color: cornsilk;
+		background-color: rgb(228, 221, 188);
 		width: 100%;
-		height: 50vh;
 		display: grid;
 		grid-template-areas: 'table';
+		border-radius: 3vw;
 	}
 
 	:global(#table > *) {
 		grid-area: table;
+		touch-action: none;
+		user-select: none;
 	}
 </style>

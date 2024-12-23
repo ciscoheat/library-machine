@@ -10,6 +10,6 @@
 		background-repeat: no-repeat;
 		height: var(--size);
 		width: var(--size);
-		transform: translate(150%, 50%);
+		transform: translate(68vw, 7vh);
 	}
 </style>

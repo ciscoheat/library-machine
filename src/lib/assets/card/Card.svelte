@@ -1,15 +1,31 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import interact from 'interactjs';
+
+	const pos = { x: 180, y: 300 };
+	let card: HTMLDivElement;
+
+	onMount(() => {
+		interact(card).draggable({
+			listeners: {
+				move: (event) => {
+					pos.x += event.dx;
+					pos.y += event.dy;
+				}
+			}
+		});
+	});
 </script>
 
-<div id="card"></div>
+<div class="card" style="--x: {pos.x}px; --y: {pos.y}px" bind:this={card}></div>
 
 <style>
-	#card {
-		--size: 80px;
+	.card {
+		--size: 12vw;
 		background-image: url('./card.svg');
 		background-repeat: no-repeat;
-		height: var(--size);
 		width: var(--size);
-		transform: translate(190%, 350%) rotate(-10deg);
+		height: calc(var(--size) * 0.7);
+		transform: translate(var(--x), var(--y)) rotate(-10deg);
 	}
 </style>
