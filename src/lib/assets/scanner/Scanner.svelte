@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RfidScanner } from '$lib/rfid';
+	import type { RfidScanner } from '$lib/rfidScanner';
 	import type { DropzoneOptions } from '@interactjs/actions/drop/plugin';
 
 	import { world } from '$lib/assets/world';

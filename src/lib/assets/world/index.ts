@@ -1,5 +1,6 @@
 import interact from 'interactjs';
 import type { Action } from 'svelte/action';
+import type { DraggableOptions } from '@interactjs/actions/drag/plugin';
 import type { DropzoneOptions } from '@interactjs/actions/drop/plugin';
 
 class World {
@@ -26,31 +27,37 @@ class World {
 
 	public readonly draggable: Action<
 		HTMLElement,
-		{ object: Record<string, unknown>; pos: { x: number; y: number } }
+		DraggableOptions & { object: Record<string, unknown>; pos: { x: number; y: number } }
 	> = (el, opts) => {
 		let startPos: { x: number; y: number };
 		this.data.set(el, opts.object);
 		interact(el).draggable({
+			...opts,
 			modifiers: [
+				...(opts.modifiers ?? []),
 				interact.modifiers.restrict({
 					restriction: document.documentElement
 				})
 			],
-			onstart: () => {
+			onstart: (e) => {
 				// Need to use rest operator to clone the object if it's a Proxy
 				startPos = structuredClone({ ...opts.pos });
+				if (typeof opts.onstart === 'function') opts.onstart(e);
 			},
-			onmove: (event) => {
-				opts.pos.x += event.dx;
-				opts.pos.y += event.dy;
+			onmove: (e) => {
+				opts.pos.x += e.dx;
+				opts.pos.y += e.dy;
+				if (typeof opts.onmove === 'function') opts.onmove(e);
 			},
 			onend: (e) => {
-				console.log(e.relatedTarget);
-				if (e.relatedTarget && !this.preventDrop.has(e.relatedTarget)) {
-					return;
+				// Check if drop is allowed
+				if (!e.relatedTarget || this.preventDrop.has(e.relatedTarget)) {
+					opts.pos.x = startPos.x;
+					opts.pos.y = startPos.y;
+				} else {
+					console.log('Dropped on', e.relatedTarget);
 				}
-				opts.pos.x = startPos.x;
-				opts.pos.y = startPos.y;
+				if (typeof opts.onend === 'function') opts.onend(e);
 			}
 		});
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Card as CardType } from '$lib/models/card';
+
 	import { books } from '$lib';
 	import Bookshelf from '$lib/assets/bookshelf/Bookshelf.svelte';
 	import CardReader from '$lib/assets/card-reader/CardReader.svelte';
@@ -7,12 +9,15 @@
 	import Scanner from '$lib/assets/scanner/Scanner.svelte';
 	import Screen from '$lib/assets/screen/Screen.svelte';
 	import { world } from '$lib/assets/world';
-	import type { Card as CardType } from '$lib/models/card';
-	import { hash } from '$lib/models/common';
-	import { ObjectRfidScanner } from '$lib/rfid';
+	import { ObjectRfidScanner } from '$lib/rfidScanner';
 
-	let card = { id: 'abcde', pin: hash('1234') } satisfies CardType;
+	let card = { rfid: 'abcdefgh' } satisfies CardType;
+
 	let scanner = new ObjectRfidScanner((rfid) => {
+		console.log(rfid);
+	});
+
+	let cardReader = new ObjectRfidScanner((rfid) => {
 		console.log(rfid);
 	});
 </script>
@@ -23,7 +28,7 @@
 	<div id="table" use:world.droppable>
 		<Printer></Printer>
 		<Scanner {scanner}></Scanner>
-		<CardReader></CardReader>
+		<CardReader {cardReader}></CardReader>
 		<Card {card}></Card>
 	</div>
 </main>

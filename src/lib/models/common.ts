@@ -19,11 +19,10 @@ export function hash(s: string) {
 	return hash.toString();
 }
 
-export const rfid = z.string().min(1).regex(/\w+/);
+export const idString = (length: number) => z.string().min(length).regex(/\w+/);
+export const rfid = idString(1);
 export const charString = (length: number) =>
 	z
 		.string()
 		.min(length)
 		.regex(/^\p{L}/u);
-
-export const idString = (length: number) => z.string().min(length).regex(/\w+/);

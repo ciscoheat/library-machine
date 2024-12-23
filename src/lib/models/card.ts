@@ -1,8 +1,8 @@
 import { z } from 'zod';
+import { rfid } from './common';
 
 export const cardSchema = z.object({
-	id: z.string().min(1).regex(/^\w+$/),
-	pin: z.string().min(1).regex(/^\d+$/)
+	rfid
 });
 
 export type Card = z.infer<typeof cardSchema>;
