@@ -7,18 +7,15 @@
 
 <style>
 	.book {
-		max-height: 150px;
+		max-height: 170px;
 		display: flex;
-		justify-content: center;
-		align-items: center;
 		min-width: var(--width);
 		text-align: center;
-		vertical-align: middle;
 		padding: 10px 5px;
 		border: 2px solid #333;
 		background-color: rgb(233, 79, 57);
 		writing-mode: vertical-rl;
 		line-height: 1.25em;
-		transform: rotate(175deg);
+		transform: translate(6px, -3px) rotate(175deg);
 	}
 </style>

@@ -24,10 +24,7 @@
 		display: grid;
 		grid-template-rows: 200px 3fr 5fr;
 		height: 100vh;
-	}
-	#library {
-		background-image: url('$lib/assets/library.jpg');
-		background-size: cover;
+		background-color: #9bc0ed;
 	}
 	#table {
 		background-color: rgb(228, 221, 188);

@@ -16,8 +16,6 @@
 		align-items: end;
 		gap: 1px;
 		background-image: url('./wood.jpg');
-		border: 3px solid #666;
-		min-height: 150px;
-		margin-bottom: 2rem;
+		border: 8px solid rgb(163, 123, 79);
 	}
 </style>
