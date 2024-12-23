@@ -1,26 +1,21 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import interact from 'interactjs';
+	import type { Card } from '$lib/models/card';
+	import { world } from '$lib/assets/world';
 
-	const pos = { x: 180, y: 300 };
-	let card: HTMLDivElement;
+	let { card }: { card: Card } = $props();
 
-	onMount(() => {
-		interact(card).draggable({
-			listeners: {
-				move: (event) => {
-					pos.x += event.dx;
-					pos.y += event.dy;
-				}
-			}
-		});
-	});
+	const pos = $state({ x: 180, y: 300 });
 </script>
 
-<div class="card" style="--x: {pos.x}px; --y: {pos.y}px" bind:this={card}></div>
+<div
+	class="card"
+	style="--x: {pos.x}px; --y: {pos.y}px"
+	use:world.draggable={{ object: card, pos }}
+></div>
 
 <style>
 	.card {
+		z-index: 3;
 		--size: 12vw;
 		background-image: url('./card.svg');
 		background-repeat: no-repeat;

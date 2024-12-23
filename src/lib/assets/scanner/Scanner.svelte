@@ -1,29 +1,30 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import interact from 'interactjs';
+	import type { RfidScanner } from '$lib/rfid';
+	import type { DropzoneOptions } from '@interactjs/actions/drop/plugin';
 
-	//const pos = { x: 100, y: 200 };
-	let scanner: HTMLDivElement;
+	import { world } from '$lib/assets/world';
 
-	onMount(() => {
-		interact(scanner).dropzone({
-			ondrop(e) {
-				console.log(e.relatedTarget, 'was dropped into', e.target);
-			}
-		});
-	});
+	let { scanner }: { scanner: RfidScanner } = $props();
+
+	const events: DropzoneOptions = {
+		ondrop(e) {
+			//console.log(e.relatedTarget);
+			const item = world.get(e.relatedTarget);
+			if (item) scanner.scan(item);
+		}
+	};
 </script>
 
-<div class="scanner" bind:this={scanner}></div>
+<div class="scanner" use:world.droppable={events}></div>
 
 <style>
 	.scanner {
-		border-radius: 1vw;
+		border-radius: 0.5vw;
 		--width: 280px;
 		--height: 280px;
 		background-color: crimson;
 		height: var(--height);
 		width: var(--width);
-		transform: translate(170%, 80%);
+		transform: translate(170%, 80%) skew(10deg);
 	}
 </style>

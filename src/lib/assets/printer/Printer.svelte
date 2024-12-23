@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { world } from '$lib/assets/world';
 </script>
 
-<div id="printer"></div>
+<div id="printer" use:world.droppable={{ prevent: true }}></div>
 
 <style>
 	#printer {

@@ -6,16 +6,25 @@
 	import Printer from '$lib/assets/printer/Printer.svelte';
 	import Scanner from '$lib/assets/scanner/Scanner.svelte';
 	import Screen from '$lib/assets/screen/Screen.svelte';
+	import { world } from '$lib/assets/world';
+	import type { Card as CardType } from '$lib/models/card';
+	import { hash } from '$lib/models/common';
+	import { ObjectRfidScanner } from '$lib/rfid';
+
+	let card = { id: 'abcde', pin: hash('1234') } satisfies CardType;
+	let scanner = new ObjectRfidScanner((rfid) => {
+		console.log(rfid);
+	});
 </script>
 
 <main>
 	<Bookshelf {books}></Bookshelf>
 	<div id="library"><Screen></Screen></div>
-	<div id="table">
+	<div id="table" use:world.droppable>
 		<Printer></Printer>
-		<Scanner></Scanner>
+		<Scanner {scanner}></Scanner>
 		<CardReader></CardReader>
-		<Card></Card>
+		<Card {card}></Card>
 	</div>
 </main>
 
