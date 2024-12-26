@@ -11,6 +11,10 @@
 	import { world } from '$lib/assets/world';
 	import { ObjectRfidScanner } from '$lib/rfidScanner';
 	import { ArrayPrinter } from '$lib/printer.svelte';
+	import { LibraryMachine } from '$lib/contexts/libraryMachine';
+	import { onMount } from 'svelte';
+
+	let machine: ReturnType<typeof LibraryMachine>;
 
 	let card = { rfid: 'abcdefgh' } satisfies CardType;
 
@@ -19,15 +23,21 @@
 	});
 
 	let cardReader = new ObjectRfidScanner((rfid) => {
-		console.log(rfid);
+		machine.cardScanned(rfid);
 	});
 
 	let printer = new ArrayPrinter();
+
+	let screen: Screen;
+
+	onMount(() => {
+		machine = LibraryMachine(cardReader, scanner, screen);
+	});
 </script>
 
 <main>
 	<Bookshelf {books}></Bookshelf>
-	<div id="library"><Screen></Screen></div>
+	<div id="library"><Screen bind:this={screen}></Screen></div>
 	<div id="table" use:world.droppable>
 		<Printer lines={printer.lines}></Printer>
 		<Scanner {scanner}></Scanner>

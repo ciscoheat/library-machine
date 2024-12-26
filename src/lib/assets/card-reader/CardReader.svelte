@@ -11,7 +11,8 @@
 			//console.log(e.relatedTarget);
 			const item = world.get(e.relatedTarget);
 			if (item) cardReader.scan(item);
-		}
+		},
+		overlap: 0.15
 	};
 </script>
 

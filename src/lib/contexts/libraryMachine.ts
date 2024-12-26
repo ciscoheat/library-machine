@@ -2,35 +2,48 @@
  * @DCI-context
  * Ctrl+K Ctrl+8 folds all Roles.
  */
-function LibraryMachine(CardReader, Library) {
+export function LibraryMachine(
+	CardReader: { scan: (item: Record<string, unknown> | undefined) => void },
+	Scanner: { scan: (item: Record<string, unknown> | undefined) => void },
+	Screen: { print: (line: string) => void }
+) {
 	//#region Context state /////
 
-	const Context = {};
+	//const Context = {};
 
 	//#endregion
 
 	//#region CardReader /////
 
-	function CardReader_scanForCard() {
-		// Access CardReader here
-		Library_method();
+	function CardReader_cardScanned(id: string) {
+		Screen_print(id);
 	}
 
 	//#endregion
 
 	//#region Library /////
 
+	/*
 	const Library = {};
 
 	function Library_verify(card: string) {
 		// Access Library here
 	}
+		*/
+
+	//#endregion
+
+	//#region Screen /////
+
+	function Screen_print(line: string) {
+		Screen.print(line);
+	}
 
 	//#endregion
 
 	return {
-		start: () => {
-			CardReader_method();
+		cardScanned(id: string) {
+			CardReader_cardScanned(id);
 		}
 	};
 }
