@@ -1,21 +1,11 @@
 <script lang="ts">
 	import type { RfidScanner } from '$lib/rfidScanner';
-	import type { DropzoneOptions } from '@interactjs/actions/drop/plugin';
-
 	import { world } from '$lib/assets/world';
 
 	let { scanner }: { scanner: RfidScanner } = $props();
-
-	const events: DropzoneOptions = {
-		ondrop(e) {
-			//console.log(e.relatedTarget);
-			const item = world.get(e.relatedTarget);
-			if (item) scanner.scan(item);
-		}
-	};
 </script>
 
-<div class="scanner" use:world.droppable={events}></div>
+<div class="scanner" use:world.scanarea={{ scanner, overlap: 0.5 }}></div>
 
 <style>
 	.scanner {

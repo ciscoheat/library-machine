@@ -19,7 +19,7 @@
 	let card = { rfid: 'abcdefgh' } satisfies CardType;
 
 	let scanner = new ObjectRfidScanner((rfid) => {
-		console.log(rfid);
+		if (rfid) console.log('Scanner:', rfid);
 	});
 
 	let cardReader = new ObjectRfidScanner((rfid) => {
@@ -41,7 +41,7 @@
 	<div id="table" use:world.droppable>
 		<Printer lines={printer.lines}></Printer>
 		<Scanner {scanner}></Scanner>
-		<CardReader {cardReader}></CardReader>
+		<CardReader scanner={cardReader}></CardReader>
 		<Card {card}></Card>
 	</div>
 </main>

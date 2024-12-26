@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	const output = $state(['I am Error', 'From Ruto']);
+	const output = $state(['Scan a card to display its id']);
 
 	let display: HTMLDivElement;
 

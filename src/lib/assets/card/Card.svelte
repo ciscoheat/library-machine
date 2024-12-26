@@ -4,7 +4,7 @@
 
 	let { card }: { card: Card } = $props();
 
-	const pos = $state({ x: 0, y: 0 });
+	const pos = $state({ x: 70, y: 0 });
 </script>
 
 <div

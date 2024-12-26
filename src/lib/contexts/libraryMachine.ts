@@ -15,8 +15,8 @@ export function LibraryMachine(
 
 	//#region CardReader /////
 
-	function CardReader_cardScanned(id: string) {
-		Screen_print(id);
+	function CardReader_cardScanned(id: string | undefined) {
+		if (id) Screen_print(id);
 	}
 
 	//#endregion
@@ -42,7 +42,7 @@ export function LibraryMachine(
 	//#endregion
 
 	return {
-		cardScanned(id: string) {
+		cardScanned(id: string | undefined) {
 			CardReader_cardScanned(id);
 		}
 	};
