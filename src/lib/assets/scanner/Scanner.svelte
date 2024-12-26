@@ -19,12 +19,14 @@
 
 <style>
 	.scanner {
+		justify-self: end;
+		grid-area: scanner;
 		border-radius: 0.5vw;
-		--width: 280px;
-		--height: 280px;
+		--width: 50%;
+		--height: 70%;
 		background-color: crimson;
 		height: var(--height);
 		width: var(--width);
-		transform: translate(170%, 80%) skew(10deg);
+		transform: translate(-10%) skew(10deg);
 	}
 </style>

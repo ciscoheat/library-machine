@@ -4,7 +4,7 @@
 
 	let { card }: { card: Card } = $props();
 
-	const pos = $state({ x: 180, y: 300 });
+	const pos = $state({ x: 0, y: 0 });
 </script>
 
 <div
@@ -15,9 +15,10 @@
 
 <style>
 	.card {
+		grid-area: table;
 		position: relative;
 		z-index: 3;
-		--size: 12vw;
+		--size: 100px;
 		background-image: url('./card.svg');
 		background-repeat: no-repeat;
 		width: var(--size);

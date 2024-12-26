@@ -19,11 +19,12 @@
 
 <style>
 	#card-reader {
+		grid-area: card-reader;
+		justify-self: start;
 		--size: 80px;
 		background-image: url('./card-reader.svg');
 		background-repeat: no-repeat;
 		height: var(--size);
 		width: var(--size);
-		transform: translate(68vw, 7vh);
 	}
 </style>

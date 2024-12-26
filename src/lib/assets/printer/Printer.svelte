@@ -1,15 +1,7 @@
 <script lang="ts">
 	import { world } from '$lib/assets/world';
 
-	let { lines = $bindable([]) }: { lines?: string[] } = $props();
-
-	$effect(() => {
-		const interval = setInterval(() => {
-			lines.push('Hello');
-		}, 5000);
-
-		return () => clearInterval(interval);
-	});
+	let { lines }: { lines: string[] } = $props();
 </script>
 
 <div class="printer" use:world.droppable={{ prevent: true }}>
@@ -18,6 +10,9 @@
 
 <style>
 	.printer {
+		z-index: 2;
+		grid-area: printer;
+		justify-self: start;
 		--width: 380px;
 		--height: calc(var(--width) / 1.44);
 		display: flex;
@@ -30,7 +25,6 @@
 
 		.paper {
 			position: relative;
-			z-index: 15;
 			font-size: 90%;
 			padding: 3px;
 			width: calc(var(--width) * 0.68);

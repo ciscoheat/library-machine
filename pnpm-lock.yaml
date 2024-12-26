@@ -11,6 +11,9 @@ importers:
       '@eslint/compat':
         specifier: ^1.2.3
         version: 1.2.4(eslint@9.17.0(jiti@1.21.7))
+      '@eslint/js':
+        specifier: ^9.17.0
+        version: 9.17.0
       '@sveltejs/adapter-auto':
         specifier: ^3.0.0
         version: 3.3.1(@sveltejs/kit@2.14.0(@sveltejs/vite-plugin-svelte@4.0.4(svelte@5.15.0)(vite@5.4.11(sass-embedded@1.83.0)))(svelte@5.15.0)(vite@5.4.11(sass-embedded@1.83.0)))
@@ -24,11 +27,14 @@ importers:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
       eslint:
-        specifier: ^9.7.0
+        specifier: ^9.17.0
         version: 9.17.0(jiti@1.21.7)
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.17.0(jiti@1.21.7))
+      eslint-plugin-dci-lint:
+        specifier: ^0.9.0
+        version: 0.9.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
       eslint-plugin-svelte:
         specifier: ^2.36.0
         version: 2.46.1(eslint@9.17.0(jiti@1.21.7))(svelte@5.15.0)
@@ -60,10 +66,10 @@ importers:
         specifier: ^3.4.9
         version: 3.4.17
       typescript:
-        specifier: ^5.0.0
+        specifier: ^5.7.2
         version: 5.7.2
       typescript-eslint:
-        specifier: ^8.0.0
+        specifier: ^8.18.1
         version: 8.18.1(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
       vite:
         specifier: ^5.4.11
@@ -766,6 +772,13 @@ packages:
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
+
+  eslint-plugin-dci-lint@0.9.0:
+    resolution: {integrity: sha512-a+rurxSCe+75WhOFZxP2E5c2E3mKUx2yh4gIZatYBmeAtswvG00DMWgUZAiB2XbP7Fd2qJmxtGESOQYP+l9cTw==}
+    engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
+    peerDependencies:
+      eslint: '>=9'
+      typescript: ^5.0.0
 
   eslint-plugin-svelte@2.46.1:
     resolution: {integrity: sha512-7xYr2o4NID/f9OEYMqxsEQsCsj4KaMy4q5sANaKkAb6/QeCjYFxRmDm2S3YC3A3pl1kyPZ/syOx/i7LcWYSbIw==}
@@ -2382,6 +2395,11 @@ snapshots:
   eslint-config-prettier@9.1.0(eslint@9.17.0(jiti@1.21.7)):
     dependencies:
       eslint: 9.17.0(jiti@1.21.7)
+
+  eslint-plugin-dci-lint@0.9.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2):
+    dependencies:
+      eslint: 9.17.0(jiti@1.21.7)
+      typescript: 5.7.2
 
   eslint-plugin-svelte@2.46.1(eslint@9.17.0(jiti@1.21.7))(svelte@5.15.0):
     dependencies:
