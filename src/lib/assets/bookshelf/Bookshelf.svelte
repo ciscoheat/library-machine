@@ -3,11 +3,11 @@
 	import Book from '$lib/assets/book/Book.svelte';
 	import { world } from '../world';
 
-	let { books }: { books: BookType[] } = $props();
+	let { items }: { items: BookType[] } = $props();
 </script>
 
 <div id="bookshelf" use:world.droppable={{ overlap: 1 }}>
-	{#each books as book}
+	{#each items as book}
 		<Book {book}></Book>
 	{/each}
 </div>

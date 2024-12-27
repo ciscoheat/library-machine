@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { idString } from './common';
+import { stringID } from './common';
 
 export const libraryCardSchema = z.object({
-	id: idString(1),
+	id: stringID(1),
 	pin: z.number().int().min(1000).max(999999)
 });
 

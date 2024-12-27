@@ -8,11 +8,11 @@ export class ObjectRfidScanner implements RfidScanner {
 	// TODO: Start and stop, for realtime scanning? Right now using only scan.
 
 	public scan(item: Record<string, unknown> | undefined) {
-		if (!item || !this.hasRfid(item)) this.scanned(undefined);
-		else this.scanned(item.rfid);
+		if (!item || !this.hasId(item)) this.scanned(undefined);
+		else this.scanned(item.id);
 	}
 
-	private hasRfid<T extends Record<string, unknown>>(object: T): object is T & { rfid: string } {
-		return 'rfid' in object;
+	private hasId<T extends Record<string, unknown>>(object: T): object is T & { id: string } {
+		return 'id' in object;
 	}
 }

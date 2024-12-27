@@ -19,8 +19,8 @@ export function hash(s: string) {
 	return hash.toString();
 }
 
-export const idString = (length: number) => z.string().min(length).regex(/\w+/);
-export const rfid = idString(1);
+export const stringID = (length: number) => z.string().min(length).regex(/\w+/);
+export const rfid = stringID(1);
 export const charString = (length: number) =>
 	z
 		.string()
