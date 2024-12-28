@@ -32,11 +32,14 @@ export function LibraryMachine(
 		Screen_displayItems();
 	}
 
-	function Borrower_logout() {
+	/**
+	 * @param forced Whether the logout was forced by the user (e.g. card removed)
+	 */
+	function Borrower_logout(forced: boolean) {
 		if (Borrower_isLoggedIn()) {
 			rebind(undefined);
 		}
-		Screen_displayThankYou();
+		Screen_displayThankYou(forced);
 	}
 
 	//#endregion
@@ -50,7 +53,7 @@ export function LibraryMachine(
 
 		if (!id) {
 			// Card removed or missing
-			if (CardReader.currentId) Borrower_logout();
+			if (CardReader.currentId) Borrower_logout(true);
 		} else {
 			// Card scanned
 			if (!Borrower_isLoggedIn()) {
@@ -64,7 +67,6 @@ export function LibraryMachine(
 
 	function CardReader_resetAttempts() {
 		CardReader.attempts = 0;
-		Screen_displayThankYou();
 	}
 
 	function CardReader_validatePIN(pin: string[]) {
@@ -105,17 +107,6 @@ export function LibraryMachine(
 
 	//#endregion
 
-	//#region Scanner /////
-
-	//const Scanner = {};
-	// function Scanner_itemScanned(id: string | undefined) {
-	// 	// TODO: Built-in security (assertions) for required login
-	// 	if (!Borrower_isLoggedIn() || !id) return;
-	// 	Library_borrowItem(id);
-	// }
-
-	//#endregion
-
 	//#region Screen /////
 
 	function Screen_displayWelcome() {
@@ -131,9 +122,9 @@ export function LibraryMachine(
 		Screen.display({ display: Display.Items, items: Borrower_items() });
 	}
 
-	function Screen_displayThankYou() {
+	function Screen_displayThankYou(forced: boolean) {
 		Screen.display({ display: Display.ThankYou });
-		Screen__displayNext({ display: Display.Welcome });
+		if (forced) Screen__displayNext({ display: Display.Welcome });
 	}
 
 	function Screen_displayError(error: Error) {
@@ -165,7 +156,7 @@ export function LibraryMachine(
 			}
 		}
 
-		Borrower_logout();
+		Borrower_logout(false);
 	}
 
 	async function Printer__printLine(line: string) {
@@ -199,7 +190,7 @@ export function LibraryMachine(
 
 			finish(receipt: boolean) {
 				if (receipt) Printer_printReceipt();
-				else Borrower_logout();
+				else Borrower_logout(false);
 			}
 		};
 	}
