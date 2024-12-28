@@ -64,7 +64,7 @@ export function LibraryMachine(
 
 	function CardReader_resetAttempts() {
 		CardReader.attempts = 0;
-		Screen_displayNext({ display: Display.Welcome });
+		Screen_displayThankYou();
 	}
 
 	function CardReader_validatePIN(pin: string[]) {
@@ -133,15 +133,16 @@ export function LibraryMachine(
 
 	function Screen_displayThankYou() {
 		Screen.display({ display: Display.ThankYou });
-		CardReader_resetAttempts();
+		Screen_displayNext({ display: Display.Welcome });
 	}
 
 	function Screen_displayError(error: Error) {
+		rebind(undefined);
 		Screen.display({ display: Display.Error, error });
-		Screen_displayNext({ display: Display.Welcome }, 10000);
+		Screen_displayNext({ display: Display.Welcome });
 	}
 
-	function Screen_displayNext(nextState: ScreenState, delay = 5000) {
+	function Screen_displayNext(nextState: ScreenState, delay = 10000) {
 		const currentState = Screen.currentState();
 		setTimeout(() => {
 			if (currentState === Screen.currentState()) Screen.display(nextState);
@@ -153,13 +154,17 @@ export function LibraryMachine(
 	//#region Printer /////
 
 	function Printer_printReceipt() {
-		Printer.print(new Date().toISOString().slice(0, 10));
-		Printer.print('');
-		for (const item of Borrower_items()) {
-			Printer.print(item.title);
-			Printer.print('Return on ' + item.expires.toISOString().slice(0, 10));
+		const items = Borrower_items();
+		if (items.length) {
+			Printer.print(new Date().toISOString().slice(0, 10));
 			Printer.print('');
+			for (const item of items) {
+				Printer.print(item.title);
+				Printer.print('Return on ' + item.expires.toISOString().slice(0, 10));
+				Printer.print('');
+			}
 		}
+
 		Borrower_logout();
 	}
 
@@ -167,6 +172,7 @@ export function LibraryMachine(
 
 	function rebind(userId: string | undefined) {
 		Borrower = { id: userId ?? '', items: [] };
+		CardReader_resetAttempts();
 	}
 
 	{
