@@ -148,6 +148,7 @@
 				grid-template-columns: repeat(3, 1fr);
 				button {
 					width: min(4vw, 35px);
+					background-color: #ddd;
 					border: 1px solid #aaa;
 				}
 			}

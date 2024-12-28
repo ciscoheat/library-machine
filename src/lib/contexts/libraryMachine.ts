@@ -133,16 +133,16 @@ export function LibraryMachine(
 
 	function Screen_displayThankYou() {
 		Screen.display({ display: Display.ThankYou });
-		Screen_displayNext({ display: Display.Welcome });
+		Screen__displayNext({ display: Display.Welcome });
 	}
 
 	function Screen_displayError(error: Error) {
 		rebind(undefined);
 		Screen.display({ display: Display.Error, error });
-		Screen_displayNext({ display: Display.Welcome });
+		Screen__displayNext({ display: Display.Welcome }, 10000);
 	}
 
-	function Screen_displayNext(nextState: ScreenState, delay = 10000) {
+	function Screen__displayNext(nextState: ScreenState, delay = 5000) {
 		const currentState = Screen.currentState();
 		setTimeout(() => {
 			if (currentState === Screen.currentState()) Screen.display(nextState);
@@ -153,19 +153,24 @@ export function LibraryMachine(
 
 	//#region Printer /////
 
-	function Printer_printReceipt() {
+	async function Printer_printReceipt() {
 		const items = Borrower_items();
 		if (items.length) {
-			Printer.print(new Date().toISOString().slice(0, 10));
-			Printer.print('');
+			await Printer__printLine(new Date().toISOString().slice(0, 10));
+			await Printer__printLine('');
 			for (const item of items) {
-				Printer.print(item.title);
-				Printer.print('Return on ' + item.expires.toISOString().slice(0, 10));
-				Printer.print('');
+				await Printer__printLine(item.title);
+				await Printer__printLine('Return on ' + item.expires.toISOString().slice(0, 10));
+				await Printer__printLine('');
 			}
 		}
 
 		Borrower_logout();
+	}
+
+	async function Printer__printLine(line: string) {
+		Printer.print(line);
+		await new Promise((resolve) => setTimeout(resolve, 100));
 	}
 
 	//#endregion
