@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { Display, type ScreenState } from './screenStates';
 
-	let { pinEntered }: { pinEntered: (buffer: string[]) => void } = $props();
+	let {
+		pinEntered,
+		finish
+	}: {
+		pinEntered: (buffer: string[]) => void;
+		finish: (receipt: boolean) => void;
+	} = $props();
 
 	let screenState: ScreenState = $state({ display: Display.Welcome });
 	let buffer: string[] = $state([]);
@@ -60,8 +66,8 @@
 	<div class="center content">
 		<p>Scan the items on the dark red area.</p>
 		<div class="buttons">
-			<button>Finish with receipt</button>
-			<button>Finish without receipt</button>
+			<button onclick={() => finish(true)}>Finish with receipt</button>
+			<button onclick={() => finish(false)}>Finish without receipt</button>
 		</div>
 		<table>
 			<thead
@@ -84,7 +90,8 @@
 
 {#snippet thankYou()}
 	<div class="center content">
-		<p>Thank you for using the automatic borrowing service!</p>
+		<p>Thank you for using the automatic borrowing service</p>
+		<p><b>Don't forget your library card!</b></p>
 	</div>
 {/snippet}
 

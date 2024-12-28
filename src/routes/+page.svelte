@@ -30,14 +30,18 @@
 	let screen: Screen;
 
 	onMount(() => {
-		machine = LibraryMachine(screen);
+		machine = LibraryMachine(screen, printer);
 	});
 </script>
 
 <main>
 	<Bookshelf {items}></Bookshelf>
 	<div id="library">
-		<Screen bind:this={screen} pinEntered={(pin) => machine.pinEntered(pin)}></Screen>
+		<Screen
+			bind:this={screen}
+			pinEntered={(pin) => machine.pinEntered(pin)}
+			finish={(receipt) => machine.finish(receipt)}
+		></Screen>
 	</div>
 	<div id="table" use:world.droppable>
 		<Printer lines={printer.lines}></Printer>

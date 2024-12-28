@@ -6,15 +6,15 @@ import { BorrowItem } from './borrowItem';
  * @DCI-context
  * Ctrl+K Ctrl+8 folds all Roles.
  */
-export function LibraryMachine(Screen: {
-	display: (state: ScreenState) => void;
-	currentState: () => ScreenState;
-}) {
-	function rebind(userId: string | undefined) {
-		Borrower = { id: userId ?? '', items: [] };
-		CardReader = { currentId: '', attempts: 0 };
+export function LibraryMachine(
+	Screen: {
+		display: (state: ScreenState) => void;
+		currentState: () => ScreenState;
+	},
+	Printer: {
+		print: (line: string) => void;
 	}
-
+) {
 	//#region Borrower /////
 
 	let Borrower: { id: string; items: { id: string; title: string; expires: Date }[] };
@@ -27,28 +27,44 @@ export function LibraryMachine(Screen: {
 		return !!Borrower.id;
 	}
 
+	function Borrower_login(userId: string) {
+		rebind(userId);
+		Screen_displayItems();
+	}
+
+	function Borrower_logout() {
+		if (Borrower_isLoggedIn()) {
+			rebind(undefined);
+		}
+		Screen_displayThankYou();
+	}
+
 	//#endregion
 
 	//#region CardReader /////
 
-	let CardReader: { currentId: string; attempts: number };
+	const CardReader: { currentId: string; attempts: number } = { currentId: '', attempts: 0 };
 
 	function CardReader_cardScanned(id: string | undefined) {
+		if (CardReader.currentId == id) return;
+
 		if (!id) {
-			// No card scanned
-			if (Borrower_isLoggedIn() || CardReader.currentId) {
-				// Card removed
-				rebind(undefined);
-				Screen_displayThankYou();
-			}
+			// Card removed or missing
+			if (CardReader.currentId) Borrower_logout();
 		} else {
 			// Card scanned
-			if (!Borrower_isLoggedIn() && !CardReader.currentId) {
+			if (!Borrower_isLoggedIn()) {
 				// New card
-				CardReader.currentId = id;
-				Screen_displayEnterPIN(CardReader.attempts);
+				Screen_displayEnterPIN(0);
 			}
 		}
+
+		CardReader.currentId = id ?? '';
+	}
+
+	function CardReader_resetAttempts() {
+		CardReader.attempts = 0;
+		Screen_displayNext({ display: Display.Welcome });
 	}
 
 	function CardReader_validatePIN(pin: string[]) {
@@ -70,8 +86,7 @@ export function LibraryMachine(Screen: {
 	function Library_validateCard(cardId: string, pin: string[]) {
 		const card = Library.cards.find((card) => card.id === cardId);
 		if (card && card.pin === Number(pin.join(''))) {
-			rebind(card.id);
-			Screen_displayItems();
+			Borrower_login(card.id);
 		} else {
 			CardReader_PINfailed();
 		}
@@ -118,15 +133,15 @@ export function LibraryMachine(Screen: {
 
 	function Screen_displayThankYou() {
 		Screen.display({ display: Display.ThankYou });
-		Screen__displayNext({ display: Display.Welcome });
+		CardReader_resetAttempts();
 	}
 
 	function Screen_displayError(error: Error) {
 		Screen.display({ display: Display.Error, error });
-		Screen__displayNext({ display: Display.Welcome }, 10000);
+		Screen_displayNext({ display: Display.Welcome }, 10000);
 	}
 
-	function Screen__displayNext(nextState: ScreenState, delay = 5000) {
+	function Screen_displayNext(nextState: ScreenState, delay = 5000) {
 		const currentState = Screen.currentState();
 		setTimeout(() => {
 			if (currentState === Screen.currentState()) Screen.display(nextState);
@@ -134,6 +149,25 @@ export function LibraryMachine(Screen: {
 	}
 
 	//#endregion
+
+	//#region Printer /////
+
+	function Printer_printReceipt() {
+		Printer.print(new Date().toISOString().slice(0, 10));
+		Printer.print('');
+		for (const item of Borrower_items()) {
+			Printer.print(item.title);
+			Printer.print('Return on ' + item.expires.toISOString().slice(0, 10));
+			Printer.print('');
+		}
+		Borrower_logout();
+	}
+
+	//#endregion
+
+	function rebind(userId: string | undefined) {
+		Borrower = { id: userId ?? '', items: [] };
+	}
 
 	{
 		rebind(undefined);
@@ -150,6 +184,11 @@ export function LibraryMachine(Screen: {
 
 			pinEntered(pin: string[]) {
 				CardReader_validatePIN(pin);
+			},
+
+			finish(receipt: boolean) {
+				if (receipt) Printer_printReceipt();
+				else Borrower_logout();
 			}
 		};
 	}
