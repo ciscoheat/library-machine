@@ -7,8 +7,8 @@
 </script>
 
 <div
-	class="book"
-	style="--width: {Math.max(35, book.pages / 15)}px; --x: {pos.x}px; --y: {pos.y}px"
+	class="book shelved"
+	style="--thickness: {Math.max(35, book.pages / 15)}px; --x: {pos.x}px; --y: {pos.y}px"
 	use:world.draggable={{ object: book, pos }}
 >
 	{book.title}
@@ -16,18 +16,27 @@
 
 <style>
 	.book {
-		max-height: 170px;
-		display: flex;
-		min-width: var(--width);
 		text-align: center;
-		padding: 10px 5px;
+		height: 150px;
+		max-width: 130px;
+		padding: 30px 10px;
 		border: 2px solid #333;
 		background-color: rgb(233, 79, 57);
-		writing-mode: vertical-rl;
-		line-height: 1.25em;
-		transform: translate(calc(var(--x) + 6px), calc(var(--y) - 2px)) rotate(175deg);
 		touch-action: none;
 		user-select: none;
-		z-index: 2;
+		z-index: 3;
+		transform: rotate(-2deg);
+
+		&.shelved {
+			height: unset;
+			max-height: 170px;
+			line-height: 1.25em;
+			transform: translate(calc(var(--x) + 6px), calc(var(--y) - 2px)) rotate(175deg);
+			writing-mode: vertical-rl;
+			display: flex;
+			min-width: var(--thickness);
+			text-align: center;
+			padding: 10px 5px;
+		}
 	}
 </style>
