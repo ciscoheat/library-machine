@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Card } from '$lib/models/card';
+	import type { Card } from '$lib/data/card';
 	import { world } from '$lib/assets/world';
 
 	let { card }: { card: Card } = $props();

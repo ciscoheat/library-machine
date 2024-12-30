@@ -1,21 +1,25 @@
 <script lang="ts">
-	import type { Book as BookType } from '$lib/models/book';
 	import Book from '$lib/assets/book/Book.svelte';
 	import { world } from '../world';
+	import { ItemType, type LibraryItem } from '$lib/data/libraryItem';
+	import { sum } from '$lib/utils';
 
-	let { items }: { items: BookType[] } = $props();
+	let { items }: { items: LibraryItem[] } = $props();
 
-	const itemPos: number[] = [0];
-	for (const item of items) {
-		const thickness = Math.max(35, item.pages / 15);
-		itemPos.push(thickness + (itemPos.at(-1) ?? 0));
-	}
+	const shelfItems = $derived(
+		items.map((item, i) => ({
+			item,
+			thickness: item.type === ItemType.Bluray ? 25 : Math.max(35, item.pages / 15),
+			startPos: i
+		}))
+	);
 </script>
 
 <div id="bookshelf" use:world.droppable={{ overlap: 1 }}>
-	{#each items as item, i}
-		{@const thickness = Math.max(35, item.pages / 15)}
-		<Book book={item} {thickness} startPos={itemPos[i]}></Book>
+	{#each shelfItems as shelfItem, i}
+		{@const totalThickness =
+			i == 0 ? 0 : sum(...shelfItems.slice(0, i).map((item) => item.thickness))}
+		<Book item={shelfItem.item} startPos={totalThickness} thickness={shelfItem.thickness}></Book>
 	{/each}
 </div>
 

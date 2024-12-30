@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Card as CardType } from '$lib/models/card';
+	import type { Card as CardType } from '$lib/data/card';
 	import { items, cards } from '$lib/library';
 	import Bookshelf from '$lib/assets/bookshelf/Bookshelf.svelte';
 	import CardReader from '$lib/assets/card-reader/CardReader.svelte';

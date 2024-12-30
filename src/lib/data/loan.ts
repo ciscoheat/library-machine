@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { rfid } from './common';
+import { id } from './common';
 
 export const loanSchema = z.object({
-	userId: rfid,
-	itemId: rfid,
+	userId: id,
+	itemId: id,
 	expires: z.date()
 });
 

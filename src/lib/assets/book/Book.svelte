@@ -1,10 +1,20 @@
 <script lang="ts">
 	import type { DragEvent } from '@interactjs/actions/drag/plugin';
-	import type { Book } from '$lib/models/book';
 	import { world } from '$lib/assets/world';
+	import type { LibraryItem } from '$lib/data/libraryItem';
 
-	let { book, startPos, thickness }: { book: Book; startPos: number; thickness: number } = $props();
+	let { item, startPos, thickness }: { item: LibraryItem; startPos: number; thickness: number } =
+		$props();
+
 	let pos = $state({ x: startPos, y: 0 });
+	let type = $derived.by(() => {
+		switch (item.type) {
+			case 1:
+				return 'book';
+			case 2:
+				return 'bluray';
+		}
+	});
 
 	let shelved = $state(true);
 	let lastShelved = $state(true);
@@ -26,16 +36,16 @@
 </script>
 
 <div
-	class="book"
+	class="item {type}"
 	class:shelved
 	style="--thickness: {thickness}px; --x: {pos.x}px; --y: {pos.y}px"
-	use:world.draggable={{ object: book, pos, onend, onstart }}
+	use:world.draggable={{ object: item, pos, onend, onstart }}
 >
-	{book.title}
+	{item.title}
 </div>
 
 <style>
-	.book {
+	.item {
 		position: absolute;
 		text-align: center;
 		height: 150px;
@@ -52,6 +62,16 @@
 			z-index: 4;
 		}
 
+		:global(&.book) {
+			padding: 10px 5px;
+		}
+
+		:global(&.bluray) {
+			font-size: 90%;
+			padding: 10px 0;
+			background-color: cornflowerblue;
+		}
+
 		&.shelved {
 			transform: translate(calc(var(--x) + 6px), calc(var(--y) - 2px)) rotate(175deg);
 			height: unset;
@@ -61,7 +81,6 @@
 			display: flex;
 			width: var(--thickness);
 			text-align: center;
-			padding: 10px 5px;
 		}
 	}
 </style>

@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { rfid } from './common';
+import { id } from './common';
 
 export const cardSchema = z.object({
-	id: rfid
+	id: id
 });
 
 export type Card = z.infer<typeof cardSchema>;
