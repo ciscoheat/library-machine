@@ -3,9 +3,7 @@
 	import type { Book } from '$lib/models/book';
 	import { world } from '$lib/assets/world';
 
-	let { book, startPos }: { book: Book; startPos: number } = $props();
-
-	let thickness = Math.max(35, book.pages / 15);
+	let { book, startPos, thickness }: { book: Book; startPos: number; thickness: number } = $props();
 	let pos = $state({ x: startPos, y: 0 });
 
 	let shelved = $state(true);
@@ -14,10 +12,11 @@
 	function onstart(e: DragEvent) {
 		lastShelved = shelved;
 		shelved = false;
-		e.target.style.position = 'absolute';
+		e.target.classList.add('dragged');
 	}
 
 	function onend(e: DragEvent) {
+		e.target.classList.remove('dragged');
 		const droppedOnShelf = e.relatedTarget?.id === 'bookshelf';
 		if (droppedOnShelf) pos.y = 0;
 
@@ -48,6 +47,10 @@
 		user-select: none;
 		z-index: 3;
 		transform: translate(calc(var(--x) + 6px), calc(var(--y) - 2px)) rotate(-2deg);
+
+		:global(&.dragged) {
+			z-index: 4;
+		}
 
 		&.shelved {
 			transform: translate(calc(var(--x) + 6px), calc(var(--y) - 2px)) rotate(175deg);

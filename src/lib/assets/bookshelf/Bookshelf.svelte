@@ -13,8 +13,9 @@
 </script>
 
 <div id="bookshelf" use:world.droppable={{ overlap: 1 }}>
-	{#each items as book, i}
-		<Book {book} startPos={itemPos[i]}></Book>
+	{#each items as item, i}
+		{@const thickness = Math.max(35, item.pages / 15)}
+		<Book book={item} {thickness} startPos={itemPos[i]}></Book>
 	{/each}
 </div>
 
