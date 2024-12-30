@@ -4,11 +4,17 @@
 	import { world } from '../world';
 
 	let { items }: { items: BookType[] } = $props();
+
+	const itemPos: number[] = [0];
+	for (const item of items) {
+		const thickness = Math.max(35, item.pages / 15);
+		itemPos.push(thickness + (itemPos.at(-1) ?? 0));
+	}
 </script>
 
 <div id="bookshelf" use:world.droppable={{ overlap: 1 }}>
-	{#each items as book}
-		<Book {book}></Book>
+	{#each items as book, i}
+		<Book {book} startPos={itemPos[i]}></Book>
 	{/each}
 </div>
 

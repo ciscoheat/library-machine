@@ -1,25 +1,35 @@
 <script lang="ts">
-	//import type { DropEvent } from '@interactjs/actions/drop/DropEvent';
 	import type { DragEvent } from '@interactjs/actions/drag/plugin';
 	import type { Book } from '$lib/models/book';
 	import { world } from '$lib/assets/world';
 
-	let { book }: { book: Book } = $props();
-	let pos = $state({ x: 0, y: 0 });
+	let { book, startPos }: { book: Book; startPos: number } = $props();
+
+	let thickness = Math.max(35, book.pages / 15);
+	let pos = $state({ x: startPos, y: 0 });
+
+	let shelved = $state(true);
+	let lastShelved = $state(true);
 
 	function onstart(e: DragEvent) {
-		e.target.classList.remove('shelved');
+		lastShelved = shelved;
+		shelved = false;
+		e.target.style.position = 'absolute';
 	}
 
 	function onend(e: DragEvent) {
-		if (e.relatedTarget?.id !== 'bookshelf') return;
-		e.target.classList.add('shelved');
+		const droppedOnShelf = e.relatedTarget?.id === 'bookshelf';
+		if (droppedOnShelf) pos.y = 0;
+
+		if (!e.relatedTarget) shelved = lastShelved;
+		else shelved = droppedOnShelf;
 	}
 </script>
 
 <div
-	class="book shelved"
-	style="--thickness: {Math.max(35, book.pages / 15)}px; --x: {pos.x}px; --y: {pos.y}px"
+	class="book"
+	class:shelved
+	style="--thickness: {thickness}px; --x: {pos.x}px; --y: {pos.y}px"
 	use:world.draggable={{ object: book, pos, onend, onstart }}
 >
 	{book.title}
@@ -27,6 +37,7 @@
 
 <style>
 	.book {
+		position: absolute;
 		text-align: center;
 		height: 150px;
 		max-width: 130px;
@@ -45,7 +56,7 @@
 			line-height: 1.25em;
 			writing-mode: vertical-rl;
 			display: flex;
-			min-width: var(--thickness);
+			width: var(--thickness);
 			text-align: center;
 			padding: 10px 5px;
 		}
