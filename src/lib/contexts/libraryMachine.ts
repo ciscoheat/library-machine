@@ -33,11 +33,10 @@ export function LibraryMachine(
 	 * @param forced Whether the logout was forced by the user (e.g. card removed)
 	 */
 	function Borrower_logout(forced: boolean, printItems: boolean) {
-		if (Borrower_isLoggedIn()) {
-			rebind(undefined);
-		}
-
+		// Need to print before rebinding, as it will clear the items
 		if (printItems) Printer_printReceipt(Borrower.items);
+
+		if (Borrower_isLoggedIn()) rebind(undefined);
 		Screen_displayThankYou(forced);
 	}
 
