@@ -1,7 +1,12 @@
+import { ItemType } from '$lib/data/libraryItem';
 import { ExpectedError } from '$lib/errors';
-import { items, users, loans, loanExpires } from '$lib/library';
+import { items, users, loans } from '$lib/library';
 
-//type LoanItem = { title: string; expires: Date };
+export function loanExpires(type: ItemType) {
+	const add = new Date();
+	add.setDate(new Date().getDate() + (type == ItemType.Book ? 14 : 7));
+	return add;
+}
 
 /**
  * @DCI-context
@@ -48,7 +53,7 @@ export function BorrowItem(
 
 	const Librarian: {
 		users: { id: string; validUntil: Date }[];
-		items: { id: string; title: string }[];
+		items: { id: string; title: string; type: ItemType }[];
 		loans: { userId: string; itemId: string; expires: Date }[];
 	} = {
 		items,
@@ -56,7 +61,7 @@ export function BorrowItem(
 		loans
 	};
 
-	function Librarian__verifyID(item: { id: string; title: string }) {
+	function Librarian__verifyID(item: { id: string; title: string; type: ItemType }) {
 		const user = Librarian.users.find((user) => user.id === Borrower_id());
 		if (!user) throw new ExpectedError('Invalid user.');
 		if (user.validUntil < new Date()) {
@@ -75,14 +80,14 @@ export function BorrowItem(
 		const loan = Librarian.loans.find((loan) => loan.itemId === LoanItem_id());
 		if (loan) throw new ExpectedError('Item already borrowed.');
 
-		Librarian__verifyID({ id: item.id, title: item.title });
+		Librarian__verifyID({ id: item.id, title: item.title, type: item.type });
 	}
 
-	function Librarian__lendItem(item: { id: string; title: string }) {
+	function Librarian__lendItem(item: { id: string; title: string; type: ItemType }) {
 		const loan = {
 			userId: Borrower_id(),
 			itemId: item.id,
-			expires: loanExpires()
+			expires: loanExpires(item.type)
 		};
 
 		Librarian.loans.push(loan);

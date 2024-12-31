@@ -33,7 +33,3 @@ export const users: User[] = [
 export const cards: LibraryCard[] = [{ id: 'abcde', pin: 1234 }];
 
 export const loans: Loan[] = [];
-
-export function loanExpires() {
-	return new Date(new Date().setDate(new Date().getDate() + 7));
-}
