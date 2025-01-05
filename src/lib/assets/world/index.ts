@@ -6,6 +6,9 @@ import { SvelteSet } from 'svelte/reactivity';
 import type { RfidScanner } from '$lib/rfidScanner';
 import { shuffle } from '$lib/utils';
 
+/**
+ * Keeps track of all objects in the app, and provides actions to interact with them
+ */
 class World {
 	private data = new WeakMap<HTMLElement, Record<string, unknown>>();
 	private preventDrop = new WeakSet<HTMLElement>();

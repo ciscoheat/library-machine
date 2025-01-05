@@ -8,6 +8,12 @@ export const stringID = (minLength: number) =>
 		.min(minLength)
 		.regex(/^[\w-]+$/);
 
+export const nanoID = (minLength: number) =>
+	z
+		.string()
+		.min(minLength)
+		.regex(/^[\w-]+$/);
+
 export const charString = (minLength: number) =>
 	z
 		.string()

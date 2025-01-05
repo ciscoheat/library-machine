@@ -6,4 +6,7 @@ export const libraryCardSchema = z.object({
 	pin: z.number().int().min(1000).max(999999)
 });
 
+/**
+ * https://schema.org/ProgramMembership
+ */
 export type LibraryCard = z.infer<typeof libraryCardSchema>;

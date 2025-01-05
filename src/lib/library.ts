@@ -1,35 +1,68 @@
-import type { LibraryCard } from './data/libraryCard';
-import { ItemType, type Bluray, type Book } from './data/libraryItem';
-import type { Loan } from './data/loan';
-import type { User } from './data/user';
+import type { Library, LibraryCard, Loan } from './data/library';
+import { nanoid } from 'nanoid';
 
 // "Database" for the library
 
-export const items = [
-	{
-		title: 'Master and Man',
-		pages: 200,
-		id: 'k9o87e79k8oe7x9o8e9',
-		type: ItemType.Book
-	} satisfies Book,
-	{
-		title: 'Crime and Punishment',
-		pages: 852,
-		id: 'qs48hymbxsoumhta2i',
-		type: ItemType.Book
-	} satisfies Book,
-	{
-		title: 'War and Peace',
-		length: 195 * 60,
-		id: 't80j9u80o98x0pmp6fq',
-		type: ItemType.Bluray
-	} satisfies Bluray
-];
+export const library: Library = {
+	'@id': nanoid(),
+	'@type': 'Library',
+	name: 'Gutenberg',
+	member: [{ '@id': nanoid(), '@type': 'Person', name: 'John Borrower' }],
+	makesOffer: [
+		{
+			'@id': nanoid(),
+			'@type': 'Offer',
+			businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
+			itemOffered: {
+				'@id': nanoid(),
+				'@type': 'Book',
+				name: 'Master and Man',
+				numberOfPages: 200,
+				isbn: '9783164841001'
+			}
+		},
+		{
+			'@id': nanoid(),
+			'@type': 'Offer',
+			businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
+			itemOffered: {
+				'@id': nanoid(),
+				'@type': 'Book',
+				name: 'Crime and Punishmant',
+				numberOfPages: 852,
+				isbn: '9783144849321'
+			}
+		},
+		{
+			'@id': nanoid(),
+			'@type': 'Offer',
+			businessFunction: 'http://purl.org/goodrelations/v1#LeaseOut',
+			itemOffered: {
+				'@id': nanoid(),
+				'@type': 'IndividualProduct',
+				additionalType: {
+					'@id': nanoid(),
+					'@type': 'VideoObject',
+					videoQuality: 'BD',
+					encodesCreativeWork: {
+						'@id': nanoid(),
+						'@type': 'Movie',
+						duration: 'PT3H15M',
+						name: 'War and Peace'
+					}
+				}
+			}
+		}
+	]
+};
 
-export const users: User[] = [
-	{ id: 'abcde', name: 'John Borrower', validUntil: new Date('2028-01-01') }
+export const cards: LibraryCard[] = [
+	{
+		'@id': nanoid(),
+		'@type': 'IndividualProduct',
+		identifier: '1234',
+		purchaseDate: new Date('2024-12-01')
+	}
 ];
-
-export const cards: LibraryCard[] = [{ id: 'abcde', pin: 1234 }];
 
 export const loans: Loan[] = [];
