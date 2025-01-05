@@ -91,6 +91,7 @@ export function LibraryMachine(
 	}
 
 	function CardReader_PINfailed() {
+		// TODO: Force remove card after 3 failed attempts
 		Screen_displayEnterPIN(++CardReader.attempts);
 	}
 

@@ -1,4 +1,4 @@
-import type { Library, Loan } from '$lib/data/library';
+import { loanSchema, type Library, type Loan } from '$lib/data/library';
 import { title } from '$lib/data/libraryItem';
 import { ExpectedError } from '$lib/errors';
 import { nanoid } from 'nanoid';
@@ -83,7 +83,11 @@ export function BorrowItem(
 			lender: Borrower
 		};
 
+		// Parse and validate data
+		// TODO: Error handling for failed validation
+		loanSchema.parse(loan);
 		Loans.push(loan);
+
 		Items_addBorrowedItem(item, loan.endTime);
 	}
 

@@ -48,3 +48,4 @@ Entrypoint for the app, `+page.svelte`.
 
 - [x] Bluray discs for borrowing (to demonstrate different item types)
 - [ ] Force remove card after 3 failed attempts
+- [ ] Error handling for unexpected Exceptions
