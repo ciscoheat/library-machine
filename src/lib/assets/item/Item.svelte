@@ -1,20 +1,25 @@
 <script lang="ts">
 	import type { DragEvent } from '@interactjs/actions/drag/plugin';
 	import { world } from '$lib/assets/world';
-	import type { LibraryItem } from '$lib/data/libraryItem';
+	import { title, type LibraryItem } from '$lib/data/libraryItem';
 
-	let { item, startPos, thickness }: { item: LibraryItem; startPos: number; thickness: number } =
-		$props();
+	let {
+		item,
+		startPos,
+		thickness
+	}: { item: LibraryItem; startPos: number; thickness: number } = $props();
 
 	let pos = $state({ x: startPos, y: 0 });
 	let type = $derived.by(() => {
-		switch (item.type) {
-			case 1:
+		switch (item['@type']) {
+			case 'Book':
 				return 'book';
-			case 2:
-				return 'bluray';
+			case 'IndividualProduct':
+				if (item._content.videoQuality === 'BD') return 'bluray';
 		}
+		return 'unknown';
 	});
+	let name = title(item);
 
 	let shelved = $state(true);
 	let lastShelved = $state(true);
@@ -41,7 +46,7 @@
 	style="--thickness: {thickness}px; --x: {pos.x}px; --y: {pos.y}px"
 	use:world.draggable={{ object: item, pos, onend, onstart }}
 >
-	{item.title}
+	{name}
 </div>
 
 <style>
@@ -68,7 +73,7 @@
 
 		:global(&.bluray) {
 			font-size: 90%;
-			padding: 10px 0;
+			padding: 5px 1px;
 			background-color: cornflowerblue;
 		}
 

@@ -1,5 +1,6 @@
 import type { Library, LibraryCard, Loan } from './data/library';
 import { nanoid } from 'nanoid';
+import { hash } from './utils';
 
 // "Database" for the library
 
@@ -40,7 +41,7 @@ export const library: Library = {
 			itemOffered: {
 				'@id': nanoid(),
 				'@type': 'IndividualProduct',
-				additionalType: {
+				_content: {
 					'@id': nanoid(),
 					'@type': 'VideoObject',
 					videoQuality: 'BD',
@@ -60,8 +61,9 @@ export const cards: LibraryCard[] = [
 	{
 		'@id': nanoid(),
 		'@type': 'IndividualProduct',
-		identifier: '1234',
-		purchaseDate: new Date('2024-12-01')
+		identifier: hash('1234'),
+		purchaseDate: new Date('2024-12-01'),
+		_owner: library.member[0]
 	}
 ];
 

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Card as CardType } from '$lib/data/card';
-	import { items, cards } from '$lib/library';
+	import { library, cards } from '$lib/library';
 	import Bookshelf from '$lib/assets/bookshelf/Bookshelf.svelte';
 	import CardReader from '$lib/assets/card-reader/CardReader.svelte';
 	import Card from '$lib/assets/card/Card.svelte';
@@ -14,8 +13,6 @@
 	import { onMount } from 'svelte';
 
 	let machine: ReturnType<typeof LibraryMachine>;
-
-	let card = { id: cards[0].id } satisfies CardType;
 
 	let scanner = new ObjectRfidScanner((rfid) => {
 		machine.itemScanned(rfid);
@@ -35,7 +32,7 @@
 </script>
 
 <main>
-	<Bookshelf {items}></Bookshelf>
+	<Bookshelf items={library.makesOffer}></Bookshelf>
 	<div id="library">
 		<Screen
 			bind:this={screen}
@@ -47,7 +44,7 @@
 		<Printer lines={printer.lines}></Printer>
 		<Scanner {scanner}></Scanner>
 		<CardReader scanner={cardReader}></CardReader>
-		<Card {card}></Card>
+		<Card card={cards[0]}></Card>
 	</div>
 </main>
 

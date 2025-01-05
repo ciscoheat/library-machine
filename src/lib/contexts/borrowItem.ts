@@ -1,26 +1,26 @@
-import { ItemType } from '$lib/data/libraryItem';
+import type { Library, Loan } from '$lib/data/library';
+import { title } from '$lib/data/libraryItem';
 import { ExpectedError } from '$lib/errors';
-import { items, users, loans } from '$lib/library';
+import { nanoid } from 'nanoid';
 
-export function loanExpires(type: ItemType) {
-	const add = new Date();
-	add.setDate(new Date().getDate() + (type == ItemType.Book ? 14 : 7));
-	return add;
-}
+type LibraryItem = Library['makesOffer'][number]['itemOffered'];
 
 /**
  * @DCI-context
  * Ctrl+K Ctrl+8 folds all Roles.
  */
 export function BorrowItem(
-	Borrower: { id: string },
-	LoanItem: { id: string },
+	// eslint-disable-next-line dci-lint/literal-role-contracts
+	Librarian: Library,
+	Borrower: { '@id': string; '@type': 'Person' },
+	LoanItem: { '@id': string },
+	Loans: Loan[],
 	Items: { id: string; title: string; expires: Date }[]
 ) {
 	//#region Borrower /////
 
 	function Borrower_id() {
-		return Borrower.id;
+		return Borrower['@id'];
 	}
 
 	//#endregion
@@ -31,10 +31,10 @@ export function BorrowItem(
 		return !!Items.find((item) => item.id === id);
 	}
 
-	function Items_borrowItem(item: { id: string; title: string }, expires: Date) {
+	function Items_addBorrowedItem(item: LibraryItem, expires: Date) {
 		Items.push({
-			id: item.id,
-			title: item.title,
+			id: item['@id'],
+			title: title(item),
 			expires
 		});
 	}
@@ -44,54 +44,53 @@ export function BorrowItem(
 	//#region LoanItem /////
 
 	function LoanItem_id() {
-		return LoanItem.id;
+		return LoanItem['@id'];
 	}
 
 	//#endregion
 
 	//#region Librarian /////
 
-	const Librarian: {
-		users: { id: string; validUntil: Date }[];
-		items: { id: string; title: string; type: ItemType }[];
-		loans: { userId: string; itemId: string; expires: Date }[];
-	} = {
-		items,
-		users,
-		loans
-	};
-
-	function Librarian__verifyID(item: { id: string; title: string; type: ItemType }) {
-		const user = Librarian.users.find((user) => user.id === Borrower_id());
+	function Librarian__verifyID(item: LibraryItem) {
+		const user = Librarian.member.find((user) => user['@id'] === Borrower_id());
 		if (!user) throw new ExpectedError('Invalid user.');
-		if (user.validUntil < new Date()) {
-			throw new ExpectedError('Library card expired.');
-		}
 
 		Librarian__lendItem(item);
 	}
 
 	function Librarian_verifyItem() {
-		const item = Librarian.items.find((item) => item.id === LoanItem_id());
-		if (!item) throw new ExpectedError('Item not found.');
+		const offer = Librarian.makesOffer.find(
+			(item) => item.itemOffered['@id'] === LoanItem_id()
+		);
+		if (!offer) throw new ExpectedError('Item not found.');
 
-		if (Items_borrowedAlready(item.id)) return;
+		const item = offer.itemOffered;
+		if (Items_borrowedAlready(item['@id'])) return;
 
-		const loan = Librarian.loans.find((loan) => loan.itemId === LoanItem_id());
+		const loan = Loans.find((loan) => loan.object['@id'] === LoanItem_id());
 		if (loan) throw new ExpectedError('Item already borrowed.');
 
-		Librarian__verifyID({ id: item.id, title: item.title, type: item.type });
+		Librarian__verifyID(item);
 	}
 
-	function Librarian__lendItem(item: { id: string; title: string; type: ItemType }) {
-		const loan = {
-			userId: Borrower_id(),
-			itemId: item.id,
-			expires: loanExpires(item.type)
+	function Librarian__lendItem(item: LibraryItem) {
+		const loan: Loan = {
+			'@id': nanoid(),
+			'@type': 'BorrowAction',
+			object: item,
+			startTime: new Date(),
+			endTime: Librarian__calculateLoanDuration(item),
+			lender: Borrower
 		};
 
-		Librarian.loans.push(loan);
-		Items_borrowItem(item, loan.expires);
+		Loans.push(loan);
+		Items_addBorrowedItem(item, loan.endTime);
+	}
+
+	function Librarian__calculateLoanDuration(item: LibraryItem) {
+		const add = new Date();
+		add.setDate(new Date().getDate() + (item['@type'] == 'Book' ? 14 : 7));
+		return add;
 	}
 
 	//#endregion

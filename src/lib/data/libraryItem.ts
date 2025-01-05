@@ -1,33 +1,40 @@
 import { z } from 'zod';
-import { charString, id } from './common';
-
-export enum ItemType {
-	Book = 1,
-	Bluray = 2,
-	Newspaper = 3
-}
+import { thing, namedThing } from './common';
 
 /**
- * Abstract base schema for a library item (book, Bluray, newspaper, etc)
+ * https://schema.org/Book
  */
-const libraryItemSchema = z.object({
-	id,
-	title: charString(1),
-	type: z.nativeEnum(ItemType)
+const book = namedThing('Book').extend({
+	numberOfPages: z.number().int().min(0),
+	isbn: z.string().regex(/^97[89]\d{10}$/)
 });
 
-export const bookSchema = libraryItemSchema.extend({
-	pages: z.number().int().min(1),
-	type: z.literal(ItemType.Book)
+/**
+ * https://schema.org/Movie
+ */
+const movie = namedThing('Movie').extend({
+	duration: z.string().regex(/^PT(?:\d+H)?(?:\d+M)?(?:\d+S)?$/)
 });
 
-export const bluraySchema = libraryItemSchema.extend({
-	/** Seconds  */
-	length: z.number().int().min(0),
-	type: z.literal(ItemType.Bluray)
+/**
+ * https://schema.org/VideoObject
+ */
+const video = thing('VideoObject').extend({
+	videoQuality: z.enum(['DVD', 'BD']),
+	encodesCreativeWork: movie
 });
 
-export type Book = z.infer<typeof bookSchema>;
-export type Bluray = z.infer<typeof bluraySchema>;
+/**
+ * https://schema.org/IndividualProduct
+ */
+const disc = thing('IndividualProduct').extend({
+	_content: video
+});
 
-export type LibraryItem = Book | Bluray;
+export const libraryItemSchema = book.or(disc);
+
+export type LibraryItem = z.infer<typeof libraryItemSchema>;
+
+export function title(item: LibraryItem) {
+	return item['@type'] === 'Book' ? item.name : item._content.encodesCreativeWork.name;
+}

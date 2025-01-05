@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Card } from '$lib/data/card';
 	import { world } from '$lib/assets/world';
+	import type { LibraryCard } from '$lib/data/library';
 
-	let { card }: { card: Card } = $props();
+	let { card }: { card: LibraryCard } = $props();
 
 	const pos = $state({ x: 70, y: 0 });
 </script>

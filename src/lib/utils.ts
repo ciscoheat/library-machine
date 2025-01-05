@@ -7,6 +7,9 @@ export function shuffle<T>(array: Iterable<T>): T[] {
 	return output;
 }
 
+/**
+ * No, not for production use.
+ */
 export function hash(s: string) {
 	let hash = 0,
 		i,

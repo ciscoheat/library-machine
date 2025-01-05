@@ -1,15 +1,18 @@
 <script lang="ts">
-	import Book from '$lib/assets/book/Book.svelte';
+	import Item from '$lib/assets/item/Item.svelte';
 	import { world } from '../world';
-	import { ItemType, type LibraryItem } from '$lib/data/libraryItem';
 	import { sum } from '$lib/utils';
+	import type { Library } from '$lib/data/library';
 
-	let { items }: { items: LibraryItem[] } = $props();
+	let { items }: { items: Library['makesOffer'] } = $props();
 
 	const shelfItems = $derived(
 		items.map((item, i) => ({
-			item,
-			thickness: item.type === ItemType.Bluray ? 25 : Math.max(35, item.pages / 15),
+			item: item.itemOffered,
+			thickness:
+				item.itemOffered['@type'] === 'Book'
+					? Math.max(35, item.itemOffered.numberOfPages / 15)
+					: 25,
 			startPos: i
 		}))
 	);
@@ -19,7 +22,8 @@
 	{#each shelfItems as shelfItem, i}
 		{@const totalThickness =
 			i == 0 ? 0 : sum(...shelfItems.slice(0, i).map((item) => item.thickness))}
-		<Book item={shelfItem.item} startPos={totalThickness} thickness={shelfItem.thickness}></Book>
+		<Item item={shelfItem.item} startPos={totalThickness} thickness={shelfItem.thickness}
+		></Item>
 	{/each}
 </div>
 

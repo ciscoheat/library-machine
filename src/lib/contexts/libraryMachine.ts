@@ -1,5 +1,6 @@
 import { Display, type ScreenState } from '$lib/assets/screen/screenStates';
-import { cards } from '$lib/library';
+import { cards, library, loans } from '$lib/library';
+import { hash } from '$lib/utils';
 import { BorrowItem } from './borrowItem';
 
 /**
@@ -17,15 +18,19 @@ export function LibraryMachine(
 ) {
 	//#region Borrower /////
 
-	let Borrower: { id: string; items: { id: string; title: string; expires: Date }[] };
+	let Borrower: {
+		'@id': string;
+		'@type': 'Person';
+		items: { id: string; title: string; expires: Date }[];
+	};
 
 	function Borrower_isLoggedIn() {
 		// A getter is ok if it is descriptive beyond "get" and returns a boolean
-		return !!Borrower.id;
+		return !!Borrower['@id'];
 	}
 
-	function Borrower_login(userId: string) {
-		rebind(userId);
+	function Borrower_login(user: Pick<typeof Borrower, '@id' | '@type'>) {
+		rebind(user['@id']);
 		Screen_displayItems(Borrower.items);
 	}
 
@@ -45,7 +50,7 @@ export function LibraryMachine(
 		if (!Borrower_isLoggedIn() || !itemId) return;
 
 		// Call nested context
-		const error = BorrowItem(Borrower, { id: itemId }, Borrower.items);
+		const error = BorrowItem(library, Borrower, { '@id': itemId }, loans, Borrower.items);
 
 		if (error) Screen_displayError(error);
 		else Screen_displayItems(Borrower.items);
@@ -55,7 +60,10 @@ export function LibraryMachine(
 
 	//#region CardReader /////
 
-	const CardReader: { currentId: string; attempts: number } = { currentId: '', attempts: 0 };
+	const CardReader: { currentId: string; attempts: number } = {
+		currentId: '',
+		attempts: 0
+	};
 
 	function CardReader_cardScanned(id: string | undefined) {
 		if (CardReader.currentId == id) return;
@@ -91,13 +99,13 @@ export function LibraryMachine(
 	//#region Library /////
 
 	const Library = {
-		cards: cards as { id: string; pin: number }[]
+		cards
 	};
 
 	function Library_validateCard(cardId: string, pin: string[]) {
-		const card = Library.cards.find((card) => card.id === cardId);
-		if (card && card.pin === Number(pin.join(''))) {
-			Borrower_login(card.id);
+		const card = Library.cards.find((card) => card['@id'] === cardId);
+		if (card && card.identifier === hash(pin.join(''))) {
+			Borrower_login(card._owner);
 		} else {
 			CardReader_PINfailed();
 		}
@@ -165,7 +173,7 @@ export function LibraryMachine(
 	 * Reset the Context state, rebind to a new user or undefined (not logged in).
 	 */
 	function rebind(userId: string | undefined) {
-		Borrower = { id: userId ?? '', items: [] };
+		Borrower = { '@id': userId ?? '', '@type': 'Person', items: [] };
 		CardReader_resetAttempts();
 	}
 
