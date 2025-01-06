@@ -1,4 +1,5 @@
 import { Display, type ScreenState } from '$lib/assets/screen/screenStates';
+import { title } from '$lib/data/libraryItem';
 import { cards, library, loans } from '$lib/library';
 import { hash } from '$lib/utils';
 import { BorrowItem } from './borrowItem';
@@ -49,11 +50,21 @@ export function LibraryMachine(
 		// TODO: Built-in security (assertions) for required login
 		if (!Borrower_isLoggedIn() || !itemId) return;
 
-		// Call nested context
-		const error = BorrowItem(library, Borrower, { '@id': itemId }, loans, Borrower.items);
+		if (Borrower.items.find((item) => item.id === itemId)) return;
 
-		if (error) Screen_displayError(error);
-		else Screen_displayItems(Borrower.items);
+		// Call nested context
+		const loan = BorrowItem(library, Borrower, { '@id': itemId }, loans);
+
+		// TODO: Error handling (logging) for errors
+		if (loan instanceof Error) return Screen_displayError(loan);
+
+		Borrower.items.push({
+			id: loan.object['@id'],
+			title: title(loan.object),
+			expires: loan.endTime
+		});
+
+		Screen_displayItems(Borrower.items);
 	}
 
 	//#endregion

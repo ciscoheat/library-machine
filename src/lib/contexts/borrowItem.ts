@@ -1,5 +1,4 @@
 import { loanSchema, type Library, type Loan } from '$lib/data/library';
-import { title } from '$lib/data/libraryItem';
 import { ExpectedError } from '$lib/errors';
 import { nanoid } from 'nanoid';
 
@@ -14,29 +13,31 @@ export function BorrowItem(
 	Librarian: Library,
 	Borrower: { '@id': string; '@type': 'Person' },
 	LoanItem: { '@id': string },
-	Loans: Loan[],
-	Items: { id: string; title: string; expires: Date }[]
+	Loans: Loan[]
 ) {
-	//#region Borrower /////
+	//#region Context /////
 
-	function Borrower_id() {
-		return Borrower['@id'];
+	const Context = {
+		/** New loan stored here when created, so it can be returned. */
+		newLoan: undefined as Loan | undefined
+	};
+
+	function Context_loanCreated(loan: Loan) {
+		if (Context.newLoan) throw new Error('New loan already created.');
+		Context.newLoan = loan;
+	}
+
+	function Context_newLoan() {
+		if (!Context.newLoan) throw new Error('New loan not created yet.');
+		return Context.newLoan;
 	}
 
 	//#endregion
 
-	//#region Items /////
+	//#region Borrower /////
 
-	function Items_borrowedAlready(id: string) {
-		return !!Items.find((item) => item.id === id);
-	}
-
-	function Items_addBorrowedItem(item: LibraryItem, expires: Date) {
-		Items.push({
-			id: item['@id'],
-			title: title(item),
-			expires
-		});
+	function Borrower_id() {
+		return Borrower['@id'];
 	}
 
 	//#endregion
@@ -64,13 +65,10 @@ export function BorrowItem(
 		);
 		if (!offer) throw new ExpectedError('Item not found.');
 
-		const item = offer.itemOffered;
-		if (Items_borrowedAlready(item['@id'])) return;
-
 		const loan = Loans.find((loan) => loan.object['@id'] === LoanItem_id());
 		if (loan) throw new ExpectedError('Item already borrowed.');
 
-		Librarian__verifyID(item);
+		Librarian__verifyID(offer.itemOffered);
 	}
 
 	function Librarian__lendItem(item: LibraryItem) {
@@ -86,9 +84,11 @@ export function BorrowItem(
 		// Parse and validate data
 		// TODO: Error handling for failed validation
 		loanSchema.parse(loan);
+
+		// Add to library database
 		Loans.push(loan);
 
-		Items_addBorrowedItem(item, loan.endTime);
+		Context_loanCreated(loan);
 	}
 
 	function Librarian__calculateLoanDuration(item: LibraryItem) {
@@ -101,6 +101,7 @@ export function BorrowItem(
 
 	try {
 		Librarian_verifyItem();
+		return Context_newLoan();
 	} catch (e) {
 		if (!(e instanceof ExpectedError)) throw e;
 		return e;
