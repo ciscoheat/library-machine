@@ -55,7 +55,7 @@ export function LibraryMachine(
 		// Call nested context
 		const loan = BorrowItem(library, Borrower, { '@id': itemId }, loans);
 
-		// TODO: Error handling (logging) for errors
+		// TODO: Error handling (logging) for expected errors
 		if (loan instanceof Error) return Screen_displayError(loan);
 
 		Borrower.items.push({
@@ -140,8 +140,12 @@ export function LibraryMachine(
 	}
 
 	function Screen_displayThankYou(forced: boolean) {
-		Screen.display({ display: Display.ThankYou });
-		if (forced) Screen__displayNext({ display: Display.Welcome });
+		if (forced && Screen.currentState().display === Display.ThankYou) {
+			Screen_displayWelcome();
+		} else {
+			Screen.display({ display: Display.ThankYou });
+			if (forced) Screen__displayNext({ display: Display.Welcome });
+		}
 	}
 
 	function Screen_displayError(error: Error) {
